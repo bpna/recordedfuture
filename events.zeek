@@ -17,5 +17,3 @@ event zeek_init() {
                     $idx=Idx, $val=Val, $destination=watchlist]);
   Input::remove("watchlist");
 }
-
-event Input::end_of_data()
