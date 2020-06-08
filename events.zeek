@@ -3,7 +3,6 @@
 module DetectBaddies;
 
 export {
-    redef enum Log::ID += {LOG};
     type Val: record {
         src_ip: addr;
         dst_ip: addr;
