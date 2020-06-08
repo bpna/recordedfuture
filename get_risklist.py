@@ -1,6 +1,6 @@
 # get_risklist.py
 # Created by Patrick Kinsella 6/4/2020
-# Last edited 6/5/2020
+# Last edited 6/7/2020
 #
 # Takes an API key for the Recorded Future API
 # Downloads an IP Risk List and creates a input file zeek_intel.txt suitable for
@@ -20,10 +20,9 @@ if __name__ == '__main__':
 
     # Create zeek_intel column names
     f = open("zeek_intel.txt", "w")
-    f.write("#fields\tindicator\tindicator_type\tmeta.risk\tmeta.riskstring")
-    f.write("\tmeta.rule\tmeta.criticalitylabel\tmeta.desc\tmeta.timestamp")
-    f.write("\tmeta.name\tmeta.criticality")
-    f.write("\n")
+    f.write("#fields\tindicator\tindicator_type\tmeta.source\tmeta.risk")
+    f.write("\tmeta.riskstring\tmeta.rule\tmeta.criticalitylabel\tmeta.desc")
+    f.write("\tmeta.timestamp\tmeta.name\tmeta.criticality\n")
 
     # Get and parse IP risk list from RF
     api = ConnectApiClient(auth=args.apikey)
@@ -35,8 +34,8 @@ if __name__ == '__main__':
         try:
             edict = json.loads(ip['EvidenceDetails'])
             for e in edict['EvidenceDetails']:
-                f.write(ip['Name'] + "\tIntel::ADDR\t" + ip['Risk'] + "\t")
-                f.write(ip['RiskString'] + "\t")
+                f.write(ip['Name'] + "\tIntel::ADDR\tRFAPI\t" + ip['Risk'])
+                f.write("\t" + ip['RiskString'] + "\t")
                 f.write(e['Rule'] + "\t" + e['CriticalityLabel'] + "\t")
                 f.write(e['EvidenceString'] + "\t" + e['Timestamp'] + "\t")
                 f.write(e['Name'] + "\t" + str(e['Criticality']))

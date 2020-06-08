@@ -1,19 +1,22 @@
+@load base/frameworks/intel
+
 module DetectBaddies;
 
 export {
-  type Idx: record {
-    src_ip: addr;
-  };
-
-  type Val: record {
-    dst_ip: addr;
-  };
+    redef enum Log::ID += {LOG};
+    type Val: record {
+        src_ip: addr;
+        dst_ip: addr;
+    };
 }
 
-global watchlist: table[addr] of Val = table();
+event watchlistentry(description: Input::EventDescription, t: Input::Event,
+                     data: Val) {
+    local s: Intel::Seen = [$indicator_type=Intel::ADDR, $host=data$dst_ip, $where=Intel::IN_ANYWHERE];
+    Intel::seen(s);
+}
 
 event zeek_init() {
-  Input::add_table([$source="watchlist.file", $name="watchlist",
-                    $idx=Idx, $val=Val, $destination=watchlist]);
-  Input::remove("watchlist");
+    Input::add_event([$source="watchlist.file", $name="watchlist",
+                      $fields=Val, $ev=watchlistentry]);
 }
